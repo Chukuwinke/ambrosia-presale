@@ -10,7 +10,7 @@ export default function Team() {
                     <div className="team-card">
                         {/* Fixed img tags with closing slash */}
                         <img src="https://randomuser.me/api/portraits/men/75.jpg" alt="Team Member" />
-                        <h3>zeus</h3>
+                        <h3>Zeus</h3>
                         <p>Chief God (Founder)</p>
                         <div className="social-links">
                             <a href="#"><i className="fab fa-twitter"></i></a>
@@ -20,7 +20,7 @@ export default function Team() {
                     <div className="team-card">
                         <img src="https://randomuser.me/api/portraits/women/68.jpg" alt="Team Member" />
                         <h3>Iris</h3>
-                        <p>Goddess of trade/commerce (Marketing Lead)</p>
+                        <p>Goddess of Trade/Commerce (Marketing Lead)</p>
                         <div className="social-links">
                             <a href="#"><i className="fab fa-twitter"></i></a>
                             <a href="#"><i className="fab fa-linkedin"></i></a>
@@ -29,7 +29,7 @@ export default function Team() {
                     <div className="team-card">
                         <img src="https://randomuser.me/api/portraits/men/32.jpg" alt="Team Member" />
                         <h3>Ares</h3>
-                        <p>cheif Developer</p>
+                        <p>Chief Developer</p>
                         <div className="social-links">
                             <a href="#"><i className="fab fa-twitter"></i></a>
                             <a href="#"><i className="fab fa-linkedin"></i></a>
@@ -38,7 +38,7 @@ export default function Team() {
                     <div className="team-card">
                         <img src="https://randomuser.me/api/portraits/women/44.jpg" alt="Team Member" />
                         <h3>Athena</h3>
-                        <p>godess of wisdom/ law (Smart Contract Auditor)</p>
+                        <p>Goddess of Wisdom/Law (Smart Contract Auditor)</p>
                         <div className="social-links">
                             <a href="#"><i className="fab fa-twitter"></i></a>
                             <a href="#"><i className="fab fa-linkedin"></i></a>

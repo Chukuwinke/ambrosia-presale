@@ -4,10 +4,10 @@ export default function HeroSection() {
         <div class="container">
             <div class="hero-content">
                 <h1>The Fashion Gods of Crypto</h1>
-                <p>Ambrosia, the divine currency of the Agoraki project, the future fashion Industry, bridging Stylistic expression with blockchain technology. Join our presale and become part of the new pantheon.</p>
+                <p>Ambrosia is the divine currency of the Agoraki project, revolutionizing the future of fashion by driving the adoption of stylistic expression within blockchain ecosystems. Join our presale and become part of a new pantheon.</p>
                 
                 <div class="quote">
-                Modomachia! A fashion revolution is coming, you're either with us or against us.
+                Modomachia! A fashion-blockchain uprising is coming you're either with us or against us.
                 </div>
                 
                 <div class="presale-box">

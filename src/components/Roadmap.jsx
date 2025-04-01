@@ -8,19 +8,19 @@ export default function Roadmap() {
                     <div class="timeline-item left">
                         <div class="timeline-content">
                             <h3>Q1 2024</h3>
-                            <p>Conceptualization in the The Divine Agora. Whitepaper released to the mortal realm.</p>
+                            <p>Conceptualization. Whitepaper released to the mortal realm.</p>
                         </div>
                     </div>
                     <div class="timeline-item right">
                         <div class="timeline-content">
                             <h3>Q2 2024</h3>
-                            <p>Private offerings to the chosen ones. Expansion of our divine team.</p>
+                            <p>Private offerings to the chosen ones. Expansion of our team.</p>
                         </div>
                     </div>
                     <div class="timeline-item left">
                         <div class="timeline-content">
                             <h3>Q3 2024</h3>
-                            <p>Presale launch across the realm. Marketing campaigns to awaken the believers Agoraki/Ambrosia.</p>
+                            <p>Presale launch across the realm. Marketing campaigns to awaken the believers in the Agoraki/Ambrosia ecosystem.</p>
                         </div>
                     </div>
                     <div class="timeline-item right">
