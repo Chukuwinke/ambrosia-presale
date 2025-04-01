@@ -2,32 +2,40 @@ import { useState } from 'react'
 import reactLogo from './assets/react.svg'
 import viteLogo from '/vite.svg'
 import './App.css'
+import HeroSection from './components/HeroSection'
+import Tokenomics from './components/Tokenomics'
+import Roadmap from './components/Roadmap'
+import Team from './components/Team'
+import Footer from './components/Footer'
 
 function App() {
-  const [count, setCount] = useState(0)
-
   return (
     <>
-      <div>
-        <a href="https://vite.dev" target="_blank">
-          <img src={viteLogo} className="logo" alt="Vite logo" />
-        </a>
-        <a href="https://react.dev" target="_blank">
-          <img src={reactLogo} className="logo react" alt="React logo" />
-        </a>
-      </div>
-      <h1>Vite + React</h1>
-      <div className="card">
-        <button onClick={() => setCount((count) => count + 1)}>
-          count is {count}
-        </button>
-        <p>
-          Edit <code>src/App.jsx</code> and save to test HMR
-        </p>
-      </div>
-      <p className="read-the-docs">
-        Click on the Vite and React logos to learn more
-      </p>
+      {/* Header */}
+      <header>
+        <div className="container">
+          <nav>
+            <div className="logo">Ambr<span>osia</span></div>
+            <div className="nav-links">
+              <a href="#about">About</a>
+              <a href="#tokenomics">Tokenomics</a>
+              <a href="#roadmap">Roadmap</a>
+              <a href="#team">Pantheon</a>
+            </div>
+            <button className="connect-wallet">
+              <i className="fas fa-wallet"></i> Connect Wallet
+            </button>
+          </nav>
+        </div>
+      </header>
+
+      {/* sections */}
+      <HeroSection />
+      <Tokenomics />
+      <Roadmap />
+      <Team />
+      <Footer />
+
     </>
   )
 }
