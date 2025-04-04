@@ -9,7 +9,7 @@
   --neon-glow: 0 0 10px var(--primary), 0 0 20px var(--primary), 0 0 30px var(--primary);
 }
 
-/* all my CSS styles */
+/* All Styles Reset */
 * {
   margin: 0;
   padding: 0;
@@ -22,8 +22,8 @@ body {
   font-family: 'Montserrat', sans-serif;
   overflow-x: hidden;
   background-image: 
-      radial-gradient(circle at 10% 20%, rgba(154, 50, 205, 0.1) 0%, transparent 20%),
-      radial-gradient(circle at 90% 80%, rgba(212, 175, 55, 0.1) 0%, transparent 20%);
+    radial-gradient(circle at 10% 20%, rgba(154, 50, 205, 0.1) 0%, transparent 20%),
+    radial-gradient(circle at 90% 80%, rgba(212, 175, 55, 0.1) 0%, transparent 20%);
 }
 
 .container {
@@ -53,16 +53,18 @@ header {
 
 nav {
   display: flex;
-  justify-content: space-between;
   align-items: center;
+  justify-content: space-between;
 }
 
+/* Header Layout */
 .logo {
   font-size: 28px;
   font-weight: 700;
   color: var(--secondary);
   text-shadow: 0 0 5px rgba(212, 175, 55, 0.5);
   font-family: 'Cinzel', serif;
+  flex: 1;
 }
 
 .logo span {
@@ -70,12 +72,18 @@ nav {
   text-shadow: 0 0 5px rgba(154, 50, 205, 0.5);
 }
 
+/* Desktop Navigation Links */
 .nav-links {
   display: flex;
   gap: 30px;
+  flex: 2;
+  justify-content: center;
 }
 
 .nav-links a {
+  display: flex;
+  align-items: center;
+  padding: 10px 5px;
   color: var(--light);
   text-decoration: none;
   font-weight: 500;
@@ -103,6 +111,16 @@ nav {
   width: 100%;
 }
 
+/* Header Right Buttons (Desktop Only) */
+.header-right {
+  display: flex;
+  align-items: center;
+  justify-content: flex-end;
+  gap: 15px;
+  flex: 1;
+}
+
+/* Unified Button Styling for Whitepaper & Connect Wallet */
 .connect-wallet {
   background: transparent;
   color: var(--secondary);
@@ -115,6 +133,13 @@ nav {
   font-family: 'Montserrat', sans-serif;
   position: relative;
   overflow: hidden;
+  text-decoration: none;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  min-width: 160px;
+  height: 45px;
 }
 
 .connect-wallet::before {
@@ -137,7 +162,28 @@ nav {
   left: 100%;
 }
 
-/* Hero Section */
+/* Hamburger Menu Icon (Mobile Only) */
+.hamburger-menu {
+  cursor: pointer;
+  font-size: 24px;
+  color: var(--light);
+}
+
+/* Utility Classes for Responsive Visibility */
+.desktop-only {
+  display: flex;
+}
+
+.mobile-only {
+  display: none;
+}
+
+/* Explicitly hide the mobile menu in desktop view */
+.mobile-menu {
+  display: none;
+}
+
+/* HERO & OTHERS (Unchanged) */
 .hero {
   padding: 180px 0 100px;
   text-align: center;
@@ -170,6 +216,7 @@ nav {
   margin-bottom: 20px;
   background: linear-gradient(90deg, var(--secondary), var(--primary));
   -webkit-background-clip: text;
+  background-clip: text;
   -webkit-text-fill-color: transparent;
   text-shadow: 0 0 20px rgba(154, 50, 205, 0.3);
   animation: glow 2s infinite alternate;
@@ -828,6 +875,7 @@ footer {
   color: rgba(230, 230, 230, 0.5);
   font-size: 14px;
 }
+
 .attribution {
   font-size: 0.8rem;
   color: rgba(230, 230, 230, 0.6);
@@ -845,76 +893,132 @@ footer {
 }
 
 /* Responsive Adjustments */
-@media (max-width: 992px) {
+
+/* Mobile Specific - Trigger mobile view at 991.2px */
+@media (max-width: 991.2px) {
+  /* Hide desktop-only elements */
+  .desktop-only {
+    display: none;
+  }
+  /* Show mobile-only elements */
+  .mobile-only {
+    display: block;
+  }
+  
+  /* Mobile Menu */
+  .mobile-menu {
+    position: fixed;
+    top: 0;
+    right: 0;
+    width: 80%;
+    height: 100vh;
+    background: rgba(10, 10, 10, 0.95);
+    padding: 20px;
+    border-left: 1px solid rgba(212, 175, 55, 0.2);
+    z-index: 999;
+    display: none;
+    flex-direction: column;
+    justify-content: flex-start;
+    gap: 20px;
+  }
+  .mobile-menu.open {
+    display: flex;
+  }
+  
+  /* Mobile Menu Close Button */
+  .mobile-menu-close {
+    align-self: flex-end;
+    cursor: pointer;
+    font-size: 24px;
+    color: var(--light);
+  }
+  
+  /* Ensure mobile buttons use the same styling */
+  .mobile-menu .connect-wallet {
+    color: var(--secondary);
+    border: 1px solid var(--secondary);
+  }
+  
+  /* Divider for social links */
+  .mobile-menu-divider {
+    width: 100%;
+    border: 0;
+    border-top: 0.5px solid rgba(212, 175, 55, 0.5);
+    margin: 15px 0;
+  }
+  
+  .mobile-social-links {
+    display: flex;
+    gap: 15px;
+    justify-content: center;
+  }
+  
+  .mobile-social-links a {
+    color: var(--light);
+    font-size: 20px;
+    text-decoration: none;
+    transition: 0.3s;
+  }
+  
+  .mobile-social-links a:hover {
+    color: var(--secondary);
+  }
+  
+  /* Mobile adjustments for hero section and others */
+  .hero {
+    padding: 150px 0 80px;
+  }
   .hero h1 {
-      font-size: 56px;
+    font-size: 42px;
   }
-  
-  .timeline::after {
-      left: 31px;
+  .hero p {
+    font-size: 18px;
   }
-  
-  .timeline-item {
-      width: 100%;
-      padding-left: 70px;
-      padding-right: 25px;
+  .presale-stats {
+    grid-template-columns: 1fr;
   }
-  
-  .timeline-item::after {
-      left: 21px;
-  }
-  
-  .left, .right {
-      left: 0;
-      text-align: left;
+  .section-title {
+    font-size: 36px;
   }
 }
 
-@media (max-width: 768px) {
-  .nav-links {
-      display: none;
-  }
-  
-  .hero {
-      padding: 150px 0 80px;
-  }
-  
+/* Additional Responsive Adjustments */
+@media (max-width: 992px) {
   .hero h1 {
-      font-size: 42px;
+    font-size: 56px;
   }
-  
-  .hero p {
-      font-size: 18px;
+  .timeline::after {
+    left: 31px;
   }
-  
-  .presale-stats {
-      grid-template-columns: 1fr;
+  .timeline-item {
+    width: 100%;
+    padding-left: 70px;
+    padding-right: 25px;
   }
-  
-  .section-title {
-      font-size: 36px;
+  .timeline-item::after {
+    left: 21px;
+  }
+  .left, .right {
+    left: 0;
+    text-align: left;
   }
 }
 
 @media (max-width: 576px) {
   .hero h1 {
-      font-size: 32px;
+    font-size: 32px;
   }
-  
   .quote {
-      font-size: 16px;
-      padding: 0 20px;
+    font-size: 16px;
+    padding: 0 20px;
   }
-  
   .presale-box {
-      padding: 30px 20px;
+    padding: 30px 20px;
   }
-  
   .section-title {
-      font-size: 28px;
+    font-size: 28px;
   }
-  
   .tokenomics-card, .team-card {
-      padding: 30px 20px;
+    padding: 30px 20px;
   }
 }

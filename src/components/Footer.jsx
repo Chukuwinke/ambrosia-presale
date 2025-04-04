@@ -2,19 +2,19 @@ export default function Footer() {
     return (
       <section className="footer" id="footer">
        <footer>
-        <div class="container">
-            <div class="footer-content">
-                <div class="footer-logo">Ambr<span>osia</span></div>
-                <p class="footer-text">The divine cryptocurrency bridging the realms of fashion gods and legends through blockchain technology.</p>
+        <div className="container">
+            <div className="footer-content">
+                <div className="footer-logo"><span>Ambrosia</span></div>
+                <p className="footer-text">The divine cryptocurrency bridging the realms of fashion gods and legends through blockchain technology.</p>
                 
-                <div class="social-links">
-                    <a href="#"><i class="fab fa-telegram"></i></a>
-                    <a href="#"><i class="fab fa-twitter"></i></a>
-                    <a href="#"><i class="fab fa-discord"></i></a>
-                    <a href="#"><i class="fab fa-medium"></i></a>
+                <div className="social-links">
+                    <a href="#"><i className="fab fa-telegram"></i></a>
+                    <a href="#"><i className="fab fa-twitter"></i></a>
+                    <a href="#"><i className="fab fa-discord"></i></a>
+                    <a href="#"><i className="fab fa-medium"></i></a>
                 </div>
                 
-                <div class="footer-links">
+                <div className="footer-links">
                     <a href="#">Whitepaper</a>
                     <a href="#">Audit Report</a>
                     <a href="#">Terms</a>
@@ -28,7 +28,7 @@ export default function Footer() {
                     </p>
                 </div>
                 
-                <p class="copyright">© 2024 Ambrosia. All rights reserved.</p>
+                <p className="copyright">© 2024 Ambrosia. All rights reserved.</p>
             </div>
         </div>
     </footer>
