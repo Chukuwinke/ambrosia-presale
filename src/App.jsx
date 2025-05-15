@@ -1,15 +1,15 @@
 // src/App.jsx
-import { useState, useEffect }                    from 'react'
+import { useState, useEffect } from 'react'
 import './App.css'
 import { usePublicClient, useWalletClient, useAccount } from 'wagmi'
-import { isAddress }                              from 'viem'
-import { ethers }                                 from 'ethers'
-import HeroSection                                from './components/HeroSection'
-import { MyConnectButton }                        from './components/atoms/MyConnectButton'
-import Tokenomics                                 from './components/Tokenomics'
-import Roadmap                                    from './components/Roadmap'
-import Team                                       from './components/Team'
-import Footer                                     from './components/Footer'
+import { isAddress } from 'viem'
+import { ethers } from 'ethers'
+import HeroSection from './components/HeroSection'
+import { MyConnectButton } from './components/atoms/MyConnectButton'
+import Tokenomics from './components/Tokenomics'
+import Roadmap from './components/Roadmap'
+import Team from './components/Team'
+import Footer from './components/Footer'
 
 // 1) Your presale contract’s minimal ABI
 export const PresaleABI = [
@@ -27,17 +27,17 @@ export default function App() {
   const toggleMobileMenu = () => setMobileMenuOpen(prev => !prev)
 
   // — Wagmi & Viem hooks
-  const publicClient       = usePublicClient()
+  const publicClient = usePublicClient()
   const { data: walletClient } = useWalletClient()
   const { address, isConnected } = useAccount()
 
   // — On-chain sale state
-  const [proof,    setProof]    = useState([])
-  const [isWL,     setIsWL]     = useState(false)
-  const [saleStart,setSaleStart]= useState(0)
-  const [saleEnd,  setSaleEnd]  = useState(0)
-  const [priceRaw, setPriceRaw]= useState('0')
-  const [soldRaw,  setSoldRaw] = useState('0')
+  const [proof, setProof] = useState([])
+  const [isWL, setIsWL] = useState(false)
+  const [saleStart, setSaleStart] = useState(0)
+  const [saleEnd, setSaleEnd] = useState(0)
+  const [priceRaw, setPriceRaw] = useState('0')
+  const [soldRaw, setSoldRaw] = useState('0')
 
   // Your contract address in .env (or stub if not deployed yet)
   const PRESALE_ADDR = import.meta.env.VITE_PRESALE_ADDRESS
@@ -54,31 +54,31 @@ export default function App() {
       const [start, end, p, s] = await Promise.all([
         publicClient.readContract({
           address: PRESALE_ADDR,
-          abi:     PresaleABI,
+          abi: PresaleABI,
           functionName: 'startTime'
         }),
         publicClient.readContract({
           address: PRESALE_ADDR,
-          abi:     PresaleABI,
+          abi: PresaleABI,
           functionName: 'endTime'
         }),
         publicClient.readContract({
           address: PRESALE_ADDR,
-          abi:     PresaleABI,
+          abi: PresaleABI,
           functionName: 'getPrice'
         }),
         publicClient.readContract({
           address: PRESALE_ADDR,
-          abi:     PresaleABI,
+          abi: PresaleABI,
           functionName: 'totalSold'
         })
       ])
       setSaleStart(Number(start))
-      setSaleEnd(  Number(end))
+      setSaleEnd(Number(end))
       setPriceRaw(p.toString())
-      setSoldRaw( s.toString())
+      setSoldRaw(s.toString())
     })()
-  }, [publicClient])
+  }, [publicClient, PRESALE_ADDR])
 
   // 3) Fetch Merkle proof off-chain on connect
   useEffect(() => {
@@ -93,50 +93,64 @@ export default function App() {
 
   // 4) Off-chain waitlist signup
   const onJoinWaitlist = async email => {
-    await fetch('/api/waitlist', {
-      method:  'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body:    JSON.stringify({ address, email })
-    })
-    alert("✅ You’re on the waitlist!")
+    try {
+      const res = await fetch('/api/waitlist', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ address, email })
+      })
+
+      if (!res.ok) {
+        const text = await res.text()
+        console.error('Waitlist failed:', text)
+        throw new Error(`Waitlist API error (${res.status})`)
+      }
+
+      const data = await res.json()
+      console.log('Waitlist success response:', data)
+      alert('✅ You’re on the waitlist!')
+    } catch (err) {
+      console.error(err)
+      alert(`❌ Failed to join waitlist: ${err.message}`)
+    }
   }
 
   // 5) On-chain buy
   const onBuy = async (amount, tokenAddr) => {
-    if (!walletClient) return alert("Connect your wallet first")
+    if (!walletClient) return alert('Connect your wallet first')
     if (!isAddress(PRESALE_ADDR))
-      return alert("⚠️ Presale contract not deployed yet")
+      return alert('⚠️ Presale contract not deployed yet')
 
     if (tokenAddr) {
       await walletClient.writeContract({
         address: PRESALE_ADDR,
-        abi:     PresaleABI,
+        abi: PresaleABI,
         functionName: 'buyWithToken',
-        args:    [tokenAddr, amount, proof]
+        args: [tokenAddr, amount, proof]
       })
     } else {
       const cost = ethers.BigNumber.from(priceRaw).mul(amount)
       await walletClient.writeContract({
         address: PRESALE_ADDR,
-        abi:     PresaleABI,
+        abi: PresaleABI,
         functionName: 'buy',
-        args:    [amount, proof],
-        value:   cost
+        args: [amount, proof],
+        value: cost
       })
     }
-    alert("🎉 Purchase successful")
+    alert('🎉 Purchase successful')
   }
 
   // 6) Derive UI stats
-  const now             = Math.floor(Date.now() / 1000)
-  const pricePerToken   = parseFloat(ethers.formatUnits(priceRaw, 6))
-  const totalSoldNum    = parseInt(soldRaw, 10)
-  const totalRaisedUSD  = pricePerToken * totalSoldNum
+  const now = Math.floor(Date.now() / 1000)
+  const pricePerToken = parseFloat(ethers.formatUnits(priceRaw, 6))
+  const totalSoldNum = parseInt(soldRaw, 10)
+  const totalRaisedUSD = pricePerToken * totalSoldNum
 
   // 7) Correct status logic: uninitialized → Coming Soon
   let saleStatus
   if (saleStart <= 0) {
-    saleStatus = 'Coming Soon'       // stub or pre-deploy state
+    saleStatus = 'Coming Soon'
   } else if (now < saleStart) {
     saleStatus = 'Coming Soon'
   } else if (now >= saleEnd) {
@@ -146,13 +160,11 @@ export default function App() {
   }
 
   // 8) Define your cumulative stage caps
-  const caps = [
-    10000, 20000, 30000  /* …add as many stages as needed… */
-  ]
+  const caps = [10000, 20000, 30000 /* …add more if needed… */]
 
   return (
     <>
-      <header>
+       <header>
         {/* …your header/nav code… */}
         <div className="container">
           <nav>

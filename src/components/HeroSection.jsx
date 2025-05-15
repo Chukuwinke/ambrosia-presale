@@ -1,3 +1,4 @@
+// src/components/HeroSection.jsx
 import React, { useState } from 'react'
 import { ethers } from 'ethers'
 import { MyConnectButton } from './atoms/MyConnectButton'
