@@ -164,6 +164,8 @@ nav {
 
 /* Hamburger Menu Icon (Mobile Only) */
 .hamburger-menu {
+  background: transparent;        /* remove white bg */
+  border: none;
   cursor: pointer;
   font-size: 24px;
   color: var(--light);
@@ -1021,4 +1023,22 @@ footer {
   .tokenomics-card, .team-card {
     padding: 30px 20px;
   }
+}
+/* Timer styling */
+.timer-container {
+  margin: 20px 0;
+  text-align: center;
+}
+.timer-container h3 {
+  color: var(--secondary);
+  margin-bottom: 8px;
+}
+.timer {
+  font-size: 18px;
+  color: var(--light);
+}
+
+/* force header logo back to 28px */
+header .logo {
+  font-size: 20px !important;
 }
