@@ -1,12 +1,13 @@
 // api/waitlist.js
 import Airtable from 'airtable'
 
-// Configure Airtable with your new PAT
-Airtable.configure({
-  apiKey: process.env.AIRTABLE_PERSONAL_ACCESS_TOKEN,
-})
-const base = Airtable.base(process.env.AIRTABLE_BASE_ID)
+const BASE_ID    = process.env.AIRTABLE_BASE_ID
+const TABLE_NAME = process.env.AIRTABLE_TABLE_NAME
+const API_KEY    = process.env.AIRTABLE_PERSONAL_ACCESS_TOKEN
 
+// Configure Airtable with your PAT
+Airtable.configure({ apiKey: API_KEY })
+const base = Airtable.base(BASE_ID)
 
 export default async function handler(req, res) {
   // Only accept POST requests
@@ -23,16 +24,26 @@ export default async function handler(req, res) {
       typeof address !== 'string' ||
       !/^0x[a-fA-F0-9]{40}$/.test(address) ||
       typeof email !== 'string' ||
-      !email.includes('@')
+      !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)
     ) {
       return res.status(400).json({ error: 'Invalid address or email' })
     }
 
-    // Persist to Airtable using PAT
-    await base(process.env.AIRTABLE_TABLE_NAME).create([
+    // 1) Check for existing record by Email OR Address
+    const filter = `OR({Email}='${email}',{Address}='${address}')`
+    const existing = await base(TABLE_NAME)
+      .select({ filterByFormula: filter, maxRecords: 1 })
+      .firstPage()
+
+    if (existing.length > 0) {
+      console.log('⚠️ Waitlist signup attempted but user already exists:', { address, email })
+      return res.status(200).json({ already: true })
+    }
+
+    // 2) If not found, create new waitlist record
+    await base(TABLE_NAME).create([
       { fields: { Address: address, Email: email } }
     ])
-    
     console.log('📥 New waitlist signup:', { address, email })
 
     return res.status(200).json({ success: true })
