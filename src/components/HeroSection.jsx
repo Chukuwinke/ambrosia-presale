@@ -72,7 +72,7 @@ export default function HeroSection({
     : isOnWaitlist
       ? 'join-pantheon disabled-btn'
       : !isWhitelisted
-        ? 'join-pantheon'
+        ? 'buy-tokens'
         : saleStatus === 'Live'
           ? 'buy-tokens'
           : 'disabled-btn'
