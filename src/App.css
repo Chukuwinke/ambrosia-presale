@@ -1042,3 +1042,92 @@ footer {
 header .logo {
   font-size: 20px !important;
 }
+
+
+/* 1. Modal backdrop & content */
+.modal-backdrop {
+  position: fixed;              /* cover entire viewport */ 
+  top: 0; left: 0; right: 0; bottom: 0;
+  background: rgba(0, 0, 0, 0.6);/* semi-opaque overlay */ 
+  display: flex;                /* center content */ 
+  align-items: center;          /* vertically center */ 
+  justify-content: center;      /* horizontally center */ 
+  z-index: 1000;                /* above all other UI */ 
+} /* modal container */ 
+
+.modal-content {
+  background: #fff;             /* match your light theme */ 
+  border-radius: 0.75rem;       /* smooth corners */ 
+  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.2);
+  padding: 2rem;                /* inner spacing */ 
+  width: 90%;                   
+  max-width: 24rem;             /* reasonable max size */ 
+  position: relative;           /* for close button */ 
+} /* modal box */ 
+
+.modal-content .modal-close {
+  position: absolute;
+  top: 0.5rem; right: 0.5rem;
+  background: transparent;
+  border: none;
+  font-size: 1.25rem;           /* large enough to tap */ 
+  color: #666;
+  cursor: pointer;
+} /* close “×” */ 
+
+/* 2. Form inputs */
+.email-input,
+.amount-input {
+  width: 100%;                  /* full width under button */ 
+  padding: 0.75rem 1rem;        /* comfy click/tap area */ 
+  margin-top: 1rem;             /* separate from button */ 
+  border: 1px solid #ccc;       /* neutral border */ 
+  border-radius: 0.5rem;        /* consistent with modal */ 
+  font-size: 1rem;              /* readable */ 
+  box-sizing: border-box;       /* include padding in width */ 
+} /* basic styling */ 
+
+.email-input:focus,
+.amount-input:focus {
+  outline: none;                
+  border-color: #6c63ff;        /* your site’s accent */ 
+  box-shadow: 0 0 0 3px rgba(108, 99, 255, 0.3);
+} /* focus ring */ 
+
+/* 3. Buttons (join-pantheon & buy-tokens) */
+.buy-tokens,
+.join-pantheon {
+  display: inline-flex;         /* align icon + text */ 
+  align-items: center;
+  justify-content: center;
+  background: #6c63ff;          /* accent color */ 
+  color: #fff;                  /* text/icon contrast */ 
+  border: none;
+  border-radius: 0.5rem;        /* match inputs & modal */ 
+  padding: 0.75rem 1.5rem;      /* click-able */ 
+  font-size: 1rem;
+  cursor: pointer;
+  transition: background 0.2s ease;
+} /* primary buttons */ 
+
+.buy-tokens:hover,
+.join-pantheon:hover {
+  background: #5745c5;          /* slightly darker on hover */ 
+} /* hover effect */ 
+
+.buy-tokens i,
+.join-pantheon i {
+  margin-left: 0.5rem;          /* space between text & icon */ 
+} /* icon spacing */ 
+
+/* 4. Disabled state */
+.disabled-btn {
+  opacity: 0.5;                 
+  cursor: not-allowed;
+} /* visually disable */ 
+
+/* 5. Already-on-waitlist style tweak */
+.join-pantheon.disabled-btn {
+  background: #e0e0e0;          /* greyed out */ 
+  color: #666;                  
+} /* differentiate from normal disabled */ 
