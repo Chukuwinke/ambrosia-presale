@@ -1,5 +1,5 @@
 // src/components/HeroSection.jsx
-import React from 'react'
+import React, { useState } from 'react'
 import { ethers } from 'ethers'
 import { MyConnectButton } from './atoms/MyConnectButton'
 import { TierProgressBar } from './TierProgressBar'
@@ -15,10 +15,13 @@ export default function HeroSection({
   currentPriceUSD,
   isConnected,
   isWhitelisted,
-  isOnWaitlist,      // NEW
-  onJoinWaitlist,    // now just opens modal
+  isOnWaitlist,
+  onJoinWaitlist,
   onBuy
 }) {
+  const [email, setEmail] = useState('')
+  const [amount, setAmount] = useState('')
+
   // Stats: show TBA until Live or Ended
   const stats = [
     {
@@ -41,11 +44,11 @@ export default function HeroSection({
     }
   ]
 
-  // Determine button label
+  // Determine button text
   const buttonText = !isConnected
     ? 'Join The Pantheon'
     : isOnWaitlist
-      ? 'Already on Waitlist'            // NEW
+      ? 'Already on Waitlist'
       : !isWhitelisted
         ? 'Join Waitlist'
         : saleStatus === 'Live'
@@ -54,41 +57,37 @@ export default function HeroSection({
             ? 'Coming Soon'
             : 'Sale Ended'
 
-  // Determine disabled state
-  const buttonDisabled = 
-    !isConnected ||
-    isOnWaitlist ||                       // NEW
-    (isWhitelisted && saleStatus !== 'Live')
-
-  // Determine icon & styling
+  // Determine icon
   const iconClass = !isConnected
     ? 'fas fa-coins'
     : isOnWaitlist
-      ? 'fas fa-user-clock'              // you can choose a different icon for "waiting"
+      ? 'fas fa-user-clock'
       : !isWhitelisted
         ? 'fas fa-user-plus'
         : 'fas fa-shopping-cart'
 
+  // Determine button styling
   const buttonClass = !isConnected
     ? 'buy-tokens'
     : isOnWaitlist
-      ? 'join-pantheon disabled-btn'     // match your disabled style
+      ? 'join-pantheon disabled-btn'
       : !isWhitelisted
         ? 'join-pantheon'
         : saleStatus === 'Live'
           ? 'buy-tokens'
           : 'disabled-btn'
 
+  // Determine disabled state
+  const buttonDisabled =
+    !isConnected ||
+    isOnWaitlist ||
+    (isWhitelisted && saleStatus !== 'Live')
+
   // Click handler
   const handleClick = () => {
     if (!isConnected || buttonDisabled) return
-    if (!isWhitelisted && !isOnWaitlist) {
-      return onJoinWaitlist()
-    }
-    if (isWhitelisted && saleStatus === 'Live') {
-      // amount prompt moved to modal/buy UI
-      return onBuy(ethers.BigNumber.from(1))  // default amount or handle elsewhere
-    }
+    if (!isWhitelisted) return onJoinWaitlist(email)
+    if (saleStatus === 'Live') return onBuy(ethers.BigNumber.from(amount))
   }
 
   return (
@@ -134,10 +133,30 @@ export default function HeroSection({
               iconClass={iconClass}
               buttonClass={buttonClass}
               onClick={handleClick}
-              disabled={buttonDisabled}               // NEW
+              disabled={buttonDisabled}
             />
 
-            {/* NOTE: Inline inputs removed; all waitlist/email and buy amount flows now handled via modal/UI elsewhere */}
+            {/* Email input for waitlist (only new signups) */}
+            {isConnected && !isWhitelisted && !isOnWaitlist && (
+              <input
+                type="email"
+                placeholder="Your email"
+                value={email}
+                onChange={e => setEmail(e.target.value)}
+                className="email-input"
+              />
+            )}
+
+            {/* Amount input for on-chain buy */}
+            {isConnected && isWhitelisted && saleStatus === 'Live' && (
+              <input
+                type="number"
+                placeholder="Tokens to buy"
+                value={amount}
+                onChange={e => setAmount(e.target.value)}
+                className="amount-input"
+              />
+            )}
           </div>
         </div>
       </div>

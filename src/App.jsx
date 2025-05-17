@@ -5,7 +5,6 @@ import { usePublicClient, useWalletClient, useAccount } from 'wagmi'
 import { isAddress } from 'viem'
 import { ethers } from 'ethers'
 import HeroSection from './components/HeroSection'
-import WaitlistModal from './components/WaitlistModal'
 import { MyConnectButton } from './components/atoms/MyConnectButton'
 import Tokenomics from './components/Tokenomics'
 import Roadmap from './components/Roadmap'
@@ -33,18 +32,17 @@ export default function App() {
   const { address, isConnected } = useAccount()
 
   // — On-chain sale state
-  const [proof, setProof]       = useState([])
-  const [isWL, setIsWL]         = useState(false)
-  const [saleStart, setSaleStart] = useState(0)
-  const [saleEnd, setSaleEnd]     = useState(0)
-  const [priceRaw, setPriceRaw]   = useState('0')
-  const [soldRaw, setSoldRaw]     = useState('0')
+  const [proof, setProof]             = useState([])
+  const [isWL, setIsWL]               = useState(false)
+  const [saleStart, setSaleStart]     = useState(0)
+  const [saleEnd, setSaleEnd]         = useState(0)
+  const [priceRaw, setPriceRaw]       = useState('0')
+  const [soldRaw, setSoldRaw]         = useState('0')
 
-  // — Waitlist UI state
+  // — Waitlist status
   const [isOnWaitlist, setOnWaitlist] = useState(false)
-  const [isModalOpen, setModalOpen]   = useState(false)
 
-  // Your contract address in .env (or stub if not deployed yet)
+  // Your presale contract address (from .env)
   const PRESALE_ADDR = import.meta.env.VITE_PRESALE_ADDRESS
 
   // 2) Load on-chain parameters once
@@ -79,9 +77,9 @@ export default function App() {
         })
       ])
       setSaleStart(Number(start))
-      setSaleEnd(  Number(end))
+      setSaleEnd(Number(end))
       setPriceRaw(p.toString())
-      setSoldRaw( s.toString())
+      setSoldRaw(s.toString())
     })()
   }, [publicClient, PRESALE_ADDR])
 
@@ -91,19 +89,22 @@ export default function App() {
     ;(async () => {
       try {
         const res = await fetch(`/api/proofs/${address.toLowerCase()}`)
-        if (!res.ok) throw new Error(`Proof fetch failed (${res.status})`)
+        if (!res.ok) {
+          console.error('Proof fetch returned:', await res.text())
+          setProof([]); setIsWL(false)
+          return
+        }
         const data = await res.json()
         setProof(data.proof || [])
         setIsWL((data.proof || []).length > 0)
       } catch (err) {
         console.error('Proof fetch error:', err)
-        setProof([])
-        setIsWL(false)
+        setProof([]); setIsWL(false)
       }
     })()
   }, [address])
 
-  // 3a) Check waitlist status on connect
+  // 4) Check waitlist status on connect
   useEffect(() => {
     if (!address) {
       setOnWaitlist(false)
@@ -111,27 +112,50 @@ export default function App() {
     }
     ;(async () => {
       try {
-        const res = await fetch('/api/waitlist', {
+        const res = await fetch('/api/waitlist-status', {
           method: 'POST',
           headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify({ address, email: '' })  // blank email = status check
+          body: JSON.stringify({ address })
         })
         if (!res.ok) throw new Error(`Status check failed (${res.status})`)
         const { already } = await res.json()
-        setOnWaitlist(!!already)
+        setOnWaitlist(already)
       } catch (err) {
         console.error('Waitlist status check failed:', err)
+        setOnWaitlist(false)
       }
     })()
   }, [address])
 
-  // 4) Open modal to join waitlist
-  const handleJoinClick = () => {
-    if (!isConnected) return
-    if (!isOnWaitlist) setModalOpen(true)
+  // 5) Off-chain waitlist signup (only for new signups)
+  const onJoinWaitlist = async email => {
+    if (!email || !email.includes('@')) {
+      return alert('Please enter a valid email to join the waitlist.')
+    }
+    try {
+      const res = await fetch('/api/waitlist', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ address, email })
+      })
+      if (!res.ok) {
+        console.error('Waitlist signup returned:', await res.text())
+        throw new Error(`Status ${res.status}`)
+      }
+      const json = await res.json()
+      if (json.already) {
+        alert("You’re already on the waitlist!")
+      } else {
+        alert('✅ You’re on the waitlist!')
+        setOnWaitlist(true)
+      }
+    } catch (err) {
+      console.error('Join waitlist error:', err)
+      alert(`❌ Failed to join waitlist: ${err.message}`)
+    }
   }
 
-  // 5) On-chain buy
+  // 6) On-chain buy
   const onBuy = async (amount, tokenAddr) => {
     if (!walletClient) return alert('Connect your wallet first')
     if (!isAddress(PRESALE_ADDR))
@@ -157,26 +181,25 @@ export default function App() {
     alert('🎉 Purchase successful')
   }
 
-  // 6) Derive UI stats
+  // 7) Derive UI stats
   const now            = Math.floor(Date.now() / 1000)
   const pricePerToken  = parseFloat(ethers.formatUnits(priceRaw, 6))
   const totalSoldNum   = parseInt(soldRaw, 10)
   const totalRaisedUSD = pricePerToken * totalSoldNum
 
-  // 7) Sale status logic
+  // 8) Sale status logic
   let saleStatus
   if (saleStart <= 0)        saleStatus = 'Coming Soon'
   else if (now < saleStart)  saleStatus = 'Coming Soon'
   else if (now >= saleEnd)   saleStatus = 'Ended'
   else                        saleStatus = 'Live'
 
-  // 8) Stage caps
-  const caps = [10000, 20000, 30000 /* …add more… */]
+  // 9) Define your cumulative stage caps
+  const caps = [10000, 20000, 30000]
 
   return (
     <>
       <header>
-        {/* …your header/nav as before… */}
         <div className="container">
           <nav>
             <h1 className="logo">Ambrosia</h1>
@@ -209,7 +232,32 @@ export default function App() {
           </nav>
         </div>
         <div className={`nav-links mobile-menu ${isMobileMenuOpen ? 'open' : ''}`}>
-          {/* …mobile menu links as before… */}
+          <div
+            className="mobile-menu-close"
+            onClick={toggleMobileMenu}
+          >
+            <i className="fas fa-times"></i>
+          </div>
+          <a href="#about">About</a>
+          <a href="#tokenomics">Tokenomics</a>
+          <a href="#roadmap">Roadmap</a>
+          <a href="#team">Pantheon</a>
+          <a href="/whitepaper.pdf" className="connect-wallet">
+            <i className="fas fa-graduation-cap"></i> Whitepaper
+          </a>
+          <MyConnectButton
+            buttonText="Connect Wallet"
+            iconClass="fas fa-wallet"
+            buttonClass="connect-wallet"
+          />
+          <hr className="mobile-menu-divider" />
+          <div className="mobile-social-links">
+            <a href="#"><i className="fab fa-instagram"></i></a>
+            <a href="#"><i className="fab fa-telegram"></i></a>
+            <a href="#"><i className="fab fa-twitter"></i></a>
+            <a href="#"><i className="fab fa-discord"></i></a>
+            <a href="#"><i className="fab fa-medium"></i></a>
+          </div>
         </div>
       </header>
 
@@ -223,15 +271,9 @@ export default function App() {
         currentPriceUSD={pricePerToken}
         isConnected={isConnected}
         isWhitelisted={isWL}
-        isOnWaitlist={isOnWaitlist}          // newly added prop
-        onJoinWaitlist={handleJoinClick}     // now opens modal
+        isOnWaitlist={isOnWaitlist}
+        onJoinWaitlist={onJoinWaitlist}
         onBuy={onBuy}
-      />
-
-      <WaitlistModal
-        isOpen={isModalOpen}
-        onClose={() => setModalOpen(false)}
-        address={address || ''}
       />
 
       <Tokenomics />
