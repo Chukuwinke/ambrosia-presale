@@ -70,7 +70,7 @@ export default function HeroSection({
   const buttonClass = !isConnected
     ? 'buy-tokens'
     : isOnWaitlist
-      ? 'join-pantheon disabled-btn'
+      ? 'buy-tokens disabled-btn'
       : !isWhitelisted
         ? 'buy-tokens'
         : saleStatus === 'Live'
@@ -127,15 +127,6 @@ export default function HeroSection({
               ))}
             </div>
 
-            {/* Primary button */}
-            <MyConnectButton
-              buttonText={buttonText}
-              iconClass={iconClass}
-              buttonClass={buttonClass}
-              onClick={handleClick}
-              disabled={buttonDisabled}
-            />
-
             {/* Email input for waitlist (only new signups) */}
             {isConnected && !isWhitelisted && !isOnWaitlist && (
               <input
@@ -146,6 +137,15 @@ export default function HeroSection({
                 className="email-input"
               />
             )}
+
+            {/* Primary button */}
+            <MyConnectButton
+              buttonText={buttonText}
+              iconClass={iconClass}
+              buttonClass={buttonClass}
+              onClick={handleClick}
+              disabled={buttonDisabled}
+            />
 
             {/* Amount input for on-chain buy */}
             {isConnected && isWhitelisted && saleStatus === 'Live' && (
